@@ -4,25 +4,28 @@
 
 ## 🤔 What is this?
 
-This repository is a place for sharing knowledge on how to create AI souls. This repository holds docs, snippets, and examples for building AI souls with `@opensouls/core` and the **Soul Engine**.
+This repository is a place for sharing knowledge on how to create AI souls. This repository holds docs, snippets, and examples for building AI souls with `@opensouls/core` and our **local runtime**.
 
 
-If you have access to the **Soul Engine**, any soul in the repo can be run from its root directory
+Any soul in the repo can be run locally using the new runtime. The runtime uses
+the OpenAI API, so set `OPENAI_API_KEY` in your environment before running a
+soul.
 
 ```bash
 cd souls/example-twenty-questions
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```
 
 ## 💫 AI Souls
 
-AI Souls are agentic and embodied digital beings, one day comprising thousands of mental processes (managed by the Soul Engine). Unlike traditional chatbots, this code will give digital souls personality, drive, ego, and will.
+AI Souls are agentic and embodied digital beings, one day comprising thousands of mental processes managed by the runtime. Unlike traditional chatbots, this code will give digital souls personality, drive, ego, and will.
 
-## 🔑 Getting Soul Engine access
-1. Join the [OPEN SOULS Discord](http://discord.gg/opensouls)
-1. That's it! Now you can login to the Soul Engine with Discord auth when running `npx soul-engine dev`
+## 🔑 Getting Started
+1. Clone the repository and install dependencies for any soul you wish to run.
+1. Export your OpenAI API key: `export OPENAI_API_KEY=your-key`.
+1. Run the soul with `node ../../runtime/cli.js .`
 
-Make sure to checkout the [Soul Engine guide](https://docs.souls.chat)!
+Make sure to checkout the [documentation](https://docs.souls.chat)!
 
 ## 🙋 Contributing
 

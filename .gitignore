@@ -1,3 +1,6 @@
-node_modules
+node_modules/
+!node_modules/@opensouls/
+!node_modules/@opensouls/engine/
+!node_modules/@opensouls/engine/**
 .env
 .DS_Store
