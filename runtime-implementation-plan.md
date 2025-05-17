@@ -16,7 +16,7 @@ This document outlines the steps required to add missing functionality to the lo
 * Provide `cancelScheduledEvent(id)` and expose `pendingScheduledEvents` via `useProcessManager`.
 * Ensure scheduled events survive process transitions and can be cancelled before execution.
 
-## Milestone 3 – Process Manager Enhancements
+## Milestone 3 – Process Manager Enhancements *(Completed)*
 
 * Track the previously executed mental process and expose it as `previousMentalProcess`.
 * Maintain `invocationCount` per process and reset when switching processes.

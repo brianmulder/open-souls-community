@@ -199,6 +199,10 @@ export class Runtime {
     this.nextProcess = null;
     this.previousProcess = undefined;
     this.invocationCount = 0;
+    this.invokingPerception = null;
+    this.pendingPerceptions = { current: [] };
+    this._perceptionQueue = [];
+    this._processing = false;
     this.emitter = new EventEmitter();
     this.workingMemory = new WorkingMemory({ soulName });
     if (blueprint) {
@@ -259,26 +263,43 @@ export class Runtime {
   }
 
   async dispatch(perception, processOverride) {
-    this.workingMemory = this.workingMemory.withMemory({
-      role: ChatMessageRoleEnum.User,
-      content: `${perception.name || 'User'} ${perception.action}: "${perception.content}"`
-    });
-    const proc = processOverride || this.currentProcess;
-    currentRuntime = this;
-    globalThis.soul = { env: this.env };
-    try {
-      const result = await proc({ workingMemory: this.workingMemory });
-      this.invocationCount += 1;
-      if (this.nextProcess) {
-        this.previousProcess = this.currentProcess;
-        this.currentProcess = this.nextProcess;
-        this.nextProcess = null;
-        this.invocationCount = 0;
+    this._perceptionQueue.push({ perception, processOverride });
+    if (this._processing) {
+      this.pendingPerceptions.current.push(perception);
+      return;
+    }
+    await this._processQueue();
+  }
+
+  async _processQueue() {
+    while (this._perceptionQueue.length > 0) {
+      const { perception, processOverride } = this._perceptionQueue.shift();
+      this._processing = true;
+      this.invokingPerception = perception;
+      this.pendingPerceptions.current = [];
+
+      this.workingMemory = this.workingMemory.withMemory({
+        role: ChatMessageRoleEnum.User,
+        content: `${perception.name || 'User'} ${perception.action}: "${perception.content}"`
+      });
+      const proc = processOverride || this.currentProcess;
+      currentRuntime = this;
+      globalThis.soul = { env: this.env };
+      try {
+        const result = await proc({ workingMemory: this.workingMemory });
+        this.invocationCount += 1;
+        if (this.nextProcess) {
+          this.previousProcess = this.currentProcess;
+          this.currentProcess = this.nextProcess;
+          this.nextProcess = null;
+          this.invocationCount = 0;
+        }
+        this.workingMemory = result instanceof WorkingMemory ? result : this.workingMemory;
+      } finally {
+        currentRuntime = null;
+        delete globalThis.soul;
+        this._processing = false;
       }
-      this.workingMemory = result instanceof WorkingMemory ? result : this.workingMemory;
-    } finally {
-      currentRuntime = null;
-      delete globalThis.soul;
     }
   }
 
@@ -345,6 +366,16 @@ export function useProcessMemory() {
     throw new Error('useProcessMemory can only be called inside a mental process');
   }
   return currentRuntime.useProcessMemory(...arguments);
+}
+
+export function usePerceptions() {
+  if (!currentRuntime) {
+    throw new Error('usePerceptions can only be called inside a mental process');
+  }
+  return {
+    invokingPerception: currentRuntime.invokingPerception,
+    pendingPerceptions: currentRuntime.pendingPerceptions
+  };
 }
 
 globalThis.$$ = $$;
