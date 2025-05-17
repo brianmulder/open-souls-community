@@ -19,14 +19,17 @@ This file describes how ChatGPT and repository contributors should work together
 
 ## Testing Changes
 
-There are no automated tests. Manual verification is required:
+Automated tests are required:
 
-1. Export `OPENAI_API_KEY` in your environment.
-2. From a soul directory, run:
-   ```bash
-   node ../../runtime/cli.js .
-   ```
-   Ensure the soul responds as expected.
+1. From `runtime/`, run `npm test`. This invokes `node --test` and runs all
+   automated checks.
+2. Tests should stub any HTTP calls to OpenAI (override `fetch`).
+
+Manual testing is optional but easy. From a soul directory:
+```bash
+node ../../runtime/cli.js .
+```
+Ensure the soul responds as expected.
 
 ## Commit Guidance
 
@@ -36,3 +39,11 @@ There are no automated tests. Manual verification is required:
 ## When Updating This File
 
 If collaboration needs change, modify this `AGENTS.md` with clear instructions.
+
+## Runtime Learnings
+
+- The runtime exposes a `currentRuntime` reference so hooks like `useActions`
+  work during mental processes.
+- Example souls may use TypeScript and be compiled when tested.
+- Automated tests verify the runtime can host a minimal "Golem" soul while
+  stubbing OpenAI requests.
