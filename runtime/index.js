@@ -197,6 +197,7 @@ export class Runtime {
     this.env = env;
     this.currentProcess = initialProcess;
     this.nextProcess = null;
+    this.previousProcess = undefined;
     this.invocationCount = 0;
     this.emitter = new EventEmitter();
     this.workingMemory = new WorkingMemory({ soulName });
@@ -234,6 +235,7 @@ export class Runtime {
   useProcessManager() {
     const runtime = this;
     return {
+      previousMentalProcess: runtime.previousProcess,
       invocationCount: runtime.invocationCount,
       pendingScheduledEvents: runtime.getPendingEvents(),
       cancelScheduledEvent(id) {
@@ -268,6 +270,7 @@ export class Runtime {
       const result = await proc({ workingMemory: this.workingMemory });
       this.invocationCount += 1;
       if (this.nextProcess) {
+        this.previousProcess = this.currentProcess;
         this.currentProcess = this.nextProcess;
         this.nextProcess = null;
         this.invocationCount = 0;
