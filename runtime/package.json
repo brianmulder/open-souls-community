@@ -4,5 +4,11 @@
   "type": "module",
   "exports": {
     ".": "./index.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
   }
 }
