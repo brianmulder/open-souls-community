@@ -2,7 +2,7 @@
 
 This document outlines the steps required to add missing functionality to the local runtime. The milestones are based on the gaps identified in the documentation and example souls under `souls/`.
 
-## Milestone 1 – Environment Variable Templating
+## Milestone 1 – Environment Variable Templating *(Completed)*
 
 * Create a configuration loader that reads `/soul/default.env.ts` for each soul.
 * Expose the parsed values via `soul.env`.
