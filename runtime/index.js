@@ -1,5 +1,7 @@
 import EventEmitter from 'events';
 
+let currentRuntime = null;
+
 export const z = {
   object(shape) {
     return { type: 'object', shape, describe(d) { this.description = d; return this; } };
@@ -191,14 +193,19 @@ export class Runtime {
       content: `${perception.name || 'User'} ${perception.action}: "${perception.content}"`
     });
     const proc = processOverride || this.currentProcess;
-    const result = await proc({ workingMemory: this.workingMemory });
-    this.invocationCount += 1;
-    if (this.nextProcess) {
-      this.currentProcess = this.nextProcess;
-      this.nextProcess = null;
-      this.invocationCount = 0;
+    currentRuntime = this;
+    try {
+      const result = await proc({ workingMemory: this.workingMemory });
+      this.invocationCount += 1;
+      if (this.nextProcess) {
+        this.currentProcess = this.nextProcess;
+        this.nextProcess = null;
+        this.invocationCount = 0;
+      }
+      this.workingMemory = result instanceof WorkingMemory ? result : this.workingMemory;
+    } finally {
+      currentRuntime = null;
     }
-    this.workingMemory = result instanceof WorkingMemory ? result : this.workingMemory;
   }
 
   on(evt, fn) {
@@ -211,12 +218,21 @@ export function createRuntime(options) {
 }
 
 export function useActions() {
-  throw new Error('useActions can only be called inside a mental process');
+  if (!currentRuntime) {
+    throw new Error('useActions can only be called inside a mental process');
+  }
+  return currentRuntime.useActions();
 }
 export function useProcessManager() {
-  throw new Error('useProcessManager can only be called inside a mental process');
+  if (!currentRuntime) {
+    throw new Error('useProcessManager can only be called inside a mental process');
+  }
+  return currentRuntime.useProcessManager();
 }
 export function useProcessMemory() {
-  throw new Error('useProcessMemory can only be called inside a mental process');
+  if (!currentRuntime) {
+    throw new Error('useProcessMemory can only be called inside a mental process');
+  }
+  return currentRuntime.useProcessMemory(...arguments);
 }
 
