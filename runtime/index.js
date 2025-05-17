@@ -1,4 +1,9 @@
 import EventEmitter from 'events';
+import fs from 'fs/promises';
+import path from 'path';
+import { pathToFileURL } from 'url';
+import os from 'os';
+import crypto from 'crypto';
 
 let currentRuntime = null;
 
@@ -68,6 +73,60 @@ export function stripEntityAndVerbFromStream(stream) {
   return stream;
 }
 
+export function $$(text) {
+  const env = globalThis.soul?.env || {};
+  return text.replace(/\{\{\s*([^}]+?)\s*\}\}/g, (_, expr) => {
+    const parts = expr.split('.');
+    let val = env;
+    for (const p of parts) {
+      val = val?.[p];
+    }
+    if (Array.isArray(val)) {
+      return val.join(', ');
+    }
+    return val ?? '';
+  });
+}
+
+export async function loadEnvironment(soulDir) {
+  const envPathTs = path.resolve(soulDir, 'soul', 'default.env.ts');
+  const envPathJs = path.resolve(soulDir, 'soul', 'default.env.js');
+  let file;
+  try {
+    await fs.access(envPathTs);
+    file = envPathTs;
+  } catch {
+    try {
+      await fs.access(envPathJs);
+      file = envPathJs;
+    } catch {
+      return {};
+    }
+  }
+  let source = await fs.readFile(file, 'utf8');
+  source = source.trim();
+  if (source.startsWith('export default')) {
+    source = source.replace(/^export default/, '').trim();
+  }
+  const wrapped = `export default (${source});`;
+  const tmp = path.join(os.tmpdir(), `env-${crypto.randomUUID()}.mjs`);
+  const transpiled = wrapped;
+  await fs.writeFile(tmp, transpiled);
+  const mod = await import(pathToFileURL(tmp).href);
+  await fs.unlink(tmp);
+  return mod.default || {};
+}
+
+export async function loadBlueprint(soulDir, env = {}) {
+  const dir = path.resolve(soulDir, 'soul');
+  const files = await fs.readdir(dir);
+  const md = files.find(f => f.endsWith('.md'));
+  if (!md) return '';
+  const content = await fs.readFile(path.join(dir, md), 'utf8');
+  globalThis.soul = { env };
+  return $$(content);
+}
+
 export async function callLLM(messages, { model = 'gpt-3.5-turbo' } = {}) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
@@ -133,13 +192,20 @@ export function createCognitiveStep(builder) {
 }
 
 export class Runtime {
-  constructor(initialProcess, soulName = 'Soul') {
+  constructor(initialProcess, soulName = 'Soul', env = {}, blueprint = '') {
     this.soulName = soulName;
+    this.env = env;
     this.currentProcess = initialProcess;
     this.nextProcess = null;
     this.invocationCount = 0;
     this.emitter = new EventEmitter();
     this.workingMemory = new WorkingMemory({ soulName });
+    if (blueprint) {
+      this.workingMemory = this.workingMemory.withMemory({
+        role: ChatMessageRoleEnum.System,
+        content: blueprint
+      });
+    }
     this.processStore = new Map();
   }
 
@@ -194,6 +260,7 @@ export class Runtime {
     });
     const proc = processOverride || this.currentProcess;
     currentRuntime = this;
+    globalThis.soul = { env: this.env };
     try {
       const result = await proc({ workingMemory: this.workingMemory });
       this.invocationCount += 1;
@@ -205,6 +272,7 @@ export class Runtime {
       this.workingMemory = result instanceof WorkingMemory ? result : this.workingMemory;
     } finally {
       currentRuntime = null;
+      delete globalThis.soul;
     }
   }
 
@@ -214,7 +282,12 @@ export class Runtime {
 }
 
 export function createRuntime(options) {
-  return new Runtime(options.initialProcess, options.soulName);
+  return new Runtime(
+    options.initialProcess,
+    options.soulName,
+    options.env || {},
+    options.blueprint || ''
+  );
 }
 
 export function useActions() {
@@ -235,4 +308,6 @@ export function useProcessMemory() {
   }
   return currentRuntime.useProcessMemory(...arguments);
 }
+
+globalThis.$$ = $$;
 
