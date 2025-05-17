@@ -9,7 +9,7 @@ This document outlines the steps required to add missing functionality to the lo
 * Implement the `$$(text)` helper to perform `{{variable}}` interpolation using `soul.env`.
 * Apply template expansion when loading blueprint markdown files (e.g. `{{entityName}}.md`).
 
-## Milestone 2 – Event Scheduling and Management
+## Milestone 2 – Event Scheduling and Management *(Completed)*
 
 * Replace the simple `setTimeout` logic with a queue of pending events.
 * Generate a unique ID for each scheduled event and return it from `scheduleEvent`.
