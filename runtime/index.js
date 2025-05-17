@@ -207,6 +207,7 @@ export class Runtime {
       });
     }
     this.processStore = new Map();
+    this.scheduledEvents = new Map();
   }
 
   useActions() {
@@ -224,10 +225,8 @@ export class Runtime {
       expire() {
         runtime.emitter.emit('expire');
       },
-      scheduleEvent({ in: seconds = 0, perception, process }) {
-        setTimeout(() => {
-          runtime.dispatch(perception, process);
-        }, seconds * 1000);
+      scheduleEvent({ in: seconds = 0, when, perception, process }) {
+        return runtime.scheduleEvent({ in: seconds, when, perception, process });
       }
     };
   }
@@ -236,6 +235,10 @@ export class Runtime {
     const runtime = this;
     return {
       invocationCount: runtime.invocationCount,
+      pendingScheduledEvents: runtime.getPendingEvents(),
+      cancelScheduledEvent(id) {
+        runtime.cancelScheduledEvent(id);
+      },
       setNextProcess(proc) {
         runtime.nextProcess = proc;
       },
@@ -278,6 +281,38 @@ export class Runtime {
 
   on(evt, fn) {
     this.emitter.on(evt, fn);
+  }
+
+  scheduleEvent({ in: seconds = 0, when, perception, process }) {
+    const id = crypto.randomUUID();
+    const whenDate = when ? new Date(when) : new Date(Date.now() + seconds * 1000);
+    const delay = Math.max(0, whenDate.getTime() - Date.now());
+    const timer = setTimeout(() => {
+      this._executeScheduledEvent(id);
+    }, delay);
+    this.scheduledEvents.set(id, { id, when: whenDate, perception, process, timer });
+    return id;
+  }
+
+  _executeScheduledEvent(id) {
+    const evt = this.scheduledEvents.get(id);
+    if (!evt) return;
+    this.scheduledEvents.delete(id);
+    this.dispatch(evt.perception, evt.process);
+  }
+
+  cancelScheduledEvent(id) {
+    const evt = this.scheduledEvents.get(id);
+    if (evt) {
+      clearTimeout(evt.timer);
+      this.scheduledEvents.delete(id);
+    }
+  }
+
+  getPendingEvents() {
+    return Array.from(this.scheduledEvents.values())
+      .map(({ id, when, perception, process }) => ({ id, when, perception, process }))
+      .sort((a, b) => a.when - b.when);
   }
 }
 
