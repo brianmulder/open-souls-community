@@ -19,14 +19,17 @@ This file describes how ChatGPT and repository contributors should work together
 
 ## Testing Changes
 
-There are no automated tests. Manual verification is required:
+Run automated tests before committing:
 
-1. Export `OPENAI_API_KEY` in your environment.
-2. From a soul directory, run:
-   ```bash
-   node ../../runtime/cli.js .
-   ```
-   Ensure the soul responds as expected.
+```bash
+cd runtime && npm test
+```
+
+You can also manually experiment with a soul by running the runtime directly. Export `OPENAI_API_KEY` and from a soul directory run:
+
+```bash
+node ../../runtime/cli.js .
+```
 
 ## Commit Guidance
 
