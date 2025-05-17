@@ -1,6 +1,6 @@
 import path from 'path';
 import readline from 'readline';
-import { createRuntime } from '../node_modules/@opensouls/engine/index.js';
+import { createRuntime } from './index.js';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
