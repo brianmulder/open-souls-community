@@ -1,6 +1,6 @@
 import path from 'path';
 import readline from 'readline';
-import { createRuntime, loadEnvironment, loadBlueprint } from './index.js';
+import { createRuntime, loadEnvironment, loadBlueprint, loadSubprocesses } from './index.js';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,10 +17,12 @@ async function main() {
     process.exit(1);
   }
   const initialProcess = await loadProcess(soulDir);
+  const subprocesses = await loadSubprocesses(soulDir);
   const env = await loadEnvironment(soulDir);
   const blueprint = await loadBlueprint(soulDir, env);
   const runtime = createRuntime({
     initialProcess,
+    subprocesses,
     soulName: path.basename(soulDir),
     env,
     blueprint,
