@@ -7,8 +7,10 @@ No “self,” no centralized mind—just perceptions in, actions out.
 ```bash
 git clone https://github.com/brianmulder/open-souls-community.git
 cd open-souls-community
-npm install          # installs Node + CLI
-npm run soul dev ./souls/example-twenty-questions   # spawn a soul
+cd runtime && npm install    # install dependencies
+cd ..
+export OPENAI_API_KEY=<your-api-key>
+node runtime/cli.js ./souls/example-twenty-questions
 ```
 
 ## Docs
