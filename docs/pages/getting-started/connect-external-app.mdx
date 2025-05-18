@@ -28,6 +28,7 @@ Graham's blueprint doesn't exist in the Soul Engine yet, so let's run the local 
 ```bash
 node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.
 
 If everything is working correctly, a new browser window should open with the Soul Engine debugger. You should also see confirmation that the code was uploaded in your terminal:
 
@@ -125,7 +126,7 @@ SOUL_ENGINE_ORGANIZATION="add your Soul Engine organization id here"
 ```
 These `SOUL_ENGINE_*` variables are only needed when you connect to the hosted Soul Engine.
 
-Not sure what's your Soul Engine organization id? Take a look at the terminal output when you run `node ../../runtime/cli.js .`. You'll see a link there - your organization id is the first part of the path after `/chats`:
+Not sure what's your Soul Engine organization id? Take a look at the terminal output when you run `node ../../runtime/cli.js .`. (The CLI transpiles TypeScript automatically.) You'll see a link there - your organization id is the first part of the path after `/chats`:
 
 ![](/images/guide/connect-external-app/08-url-parts.webp)
 
