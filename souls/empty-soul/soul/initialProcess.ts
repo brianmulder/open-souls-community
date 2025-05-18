@@ -1,12 +1,12 @@
 
-import { MentalProcess, createCognitiveStep, useActions } from "@opensouls/local-engine";
+import { MentalProcess, createCognitiveStep, useActions, createAction } from "@opensouls/local-engine";
 
 const golem: MentalProcess = async ({ workingMemory }) => {
-  const { speak } = useActions()
+  const { act } = useActions()
   const [withDialog, text] = await createCognitiveStep((instruction: string) => {
     return { command: instruction }
   })(workingMemory,"");
-  speak(text);
+  act(createAction('utterance', text));
   return withDialog;
 }
 

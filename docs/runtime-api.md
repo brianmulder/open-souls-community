@@ -1,7 +1,7 @@
 ### Public helpers exposed to MentalProcess code
 
 ```ts
-runtime.perceive(p: Perception): void              // ingest new perception
+runtime.ingestPerception(p: Perception): void     // ingest new perception
 runtime.act(a: Action): void                       // enqueue outbound action
 runtime.wait(ms: number): Promise<void>            // scheduler sleep
 runtime.store.get(key): any                        // KV persistence

@@ -1,20 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createRuntime, useActions, useSoulMemory } from '../index.js';
+import { createRuntime, useActions, useSoulMemory, createPerception } from '../index.js';
 
 const proc = async ({ workingMemory }) => {
-  const { speak } = useActions();
+  const { act } = useActions();
   const mem = useSoulMemory('flag', false);
-  speak(String(mem.current));
+  act({ type: 'utterance', payload: String(mem.current), ts: Date.now() });
   mem.current = true;
   return workingMemory;
 };
 
 test('useSoulMemory persists across invocations', async () => {
   const runtime = createRuntime({ initialProcess: proc, soulName: 'MemTest' });
-  const says = [];
-  runtime.on('says', ({ content }) => says.push(content));
-  await runtime.dispatch({ action: 'start', name: 'User', content: 'hi' });
-  await runtime.dispatch({ action: 'again', name: 'User', content: 'hi' });
-  assert.deepEqual(says, ['false', 'true']);
+  const acts = [];
+  runtime.on('act', a => acts.push(a.payload));
+  await runtime.ingestPerception(createPerception('start', 'hi'));
+  await runtime.ingestPerception(createPerception('again', 'hi'));
+  assert.deepEqual(acts, ['false', 'true']);
 });

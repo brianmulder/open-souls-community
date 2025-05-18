@@ -3,7 +3,7 @@ import readline from 'readline';
 import fs from 'fs/promises';
 import os from 'os';
 import * as ts from 'typescript';
-import { createRuntime, loadEnvironment, loadBlueprint } from './index.js';
+import { createRuntime, loadEnvironment, loadBlueprint, createPerception } from './index.js';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -80,15 +80,19 @@ async function main() {
     blueprint,
     storeDir: path.join(soulDir, '.store')
   });
-  runtime.on('says', ({ content }) => {
-    console.log(path.basename(soulDir), 'says:', content);
+  runtime.on('act', action => {
+    if (action.type === 'utterance') {
+      console.log(path.basename(soulDir), 'says:', action.payload);
+    } else {
+      console.log(path.basename(soulDir), 'action:', JSON.stringify(action));
+    }
   });
   runtime.on('log', (...args) => console.log('[log]', ...args));
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   rl.setPrompt('> ');
   rl.prompt();
   rl.on('line', async line => {
-    await runtime.dispatch({ action: 'said', name: 'User', content: line });
+    await runtime.ingestPerception(createPerception('utterance', line));
     rl.prompt();
   });
 }

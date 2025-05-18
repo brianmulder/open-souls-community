@@ -16,7 +16,7 @@ Every feature must ship with:
 
 ---
 
-## Milestone 0 · Docs Bootstrap  
+## Milestone 0 · Docs Bootstrap ✅
 Create the fresh documentation scaffold (see <scaffold> below) already agreed on (`README.md`, `VISION.md`, `ROADMAP.md`, `docs/*`).   
 Move the obsolete `runtime-implementation-plan.md` into `docs/archive/` with a “historical reference only” banner.  
 **Acceptance:** `npm test` green, repo root shows new files, README links to docs.
