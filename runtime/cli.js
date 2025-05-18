@@ -23,7 +23,8 @@ async function main() {
     initialProcess,
     soulName: path.basename(soulDir),
     env,
-    blueprint
+    blueprint,
+    storeDir: path.join(soulDir, '.store')
   });
   runtime.on('says', ({ content }) => {
     console.log(path.basename(soulDir), 'says:', content);
