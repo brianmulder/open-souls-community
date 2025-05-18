@@ -8,5 +8,5 @@ He tries to learn your name, and once he does, instead of "interlocutor" saved i
 ## Run this soul
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```

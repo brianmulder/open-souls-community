@@ -27,5 +27,5 @@ When a poker game has been requested to start by the user, `playPoker` kicks off
 In this directory run
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```

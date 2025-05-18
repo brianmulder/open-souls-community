@@ -15,5 +15,5 @@ npx soul-engine rag push ./rag
 then
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```
