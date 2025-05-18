@@ -1,3 +1,5 @@
+> **Historical reference only – replaced by `roadmap-implementation-plan.md`**
+
 # Runtime Implementation Plan
 
 This document outlines the steps required to add missing functionality to the local runtime. The milestones are based on the gaps identified in the documentation and example souls under `souls/`.
