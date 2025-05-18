@@ -149,7 +149,7 @@ export async function loadSubprocesses(soulDir) {
   return procs;
 }
 
-export async function callLLM(messages, { model = 'gpt-3.5-turbo' } = {}) {
+export async function callLLM(messages, { model = 'gpt-3.5-turbo', stream = false } = {}) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error('OPENAI_API_KEY environment variable not set');
@@ -160,18 +160,94 @@ export async function callLLM(messages, { model = 'gpt-3.5-turbo' } = {}) {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${apiKey}`
     },
-    body: JSON.stringify({ model, messages })
+    body: JSON.stringify({ model, messages, stream })
   });
-  const data = await response.json();
+  if (!stream) {
+    const data = await response.json();
+    if (!response.ok) {
+      const msg = data.error?.message || 'OpenAI API error';
+      throw new Error(msg);
+    }
+    return data.choices[0].message.content.trim();
+  }
   if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
     const msg = data.error?.message || 'OpenAI API error';
     throw new Error(msg);
   }
-  return data.choices[0].message.content.trim();
+  const decoder = new TextDecoder();
+  const queue = [];
+  const waiters = [];
+  let done = false;
+  let text = '';
+
+  const notify = () => {
+    while (waiters.length) waiters.shift()();
+  };
+
+  (async () => {
+    let buffer = '';
+    try {
+      for await (const chunk of response.body) {
+        buffer += decoder.decode(chunk, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed.startsWith('data:')) continue;
+          const data = trimmed.slice(5).trim();
+          if (data === '[DONE]') {
+            done = true;
+            notify();
+            return;
+          }
+          try {
+            const json = JSON.parse(data);
+            const token = json.choices?.[0]?.delta?.content;
+            if (token) {
+              queue.push(token);
+              text += token;
+              notify();
+            }
+          } catch {
+            // ignore
+          }
+        }
+      }
+    } finally {
+      done = true;
+      notify();
+    }
+  })();
+
+  async function* streamGenerator() {
+    while (true) {
+      if (queue.length) {
+        yield queue.shift();
+        continue;
+      }
+      if (done) return;
+      await new Promise(res => waiters.push(res));
+    }
+  }
+
+  const finalPromise = (async () => {
+    while (!done) {
+      await new Promise(res => waiters.push(res));
+    }
+    return text.trim();
+  })();
+
+  return { stream: streamGenerator, promise: finalPromise };
 }
 
 export function createCognitiveStep(builder) {
   return async function (workingMemory, ...args) {
+    let options = {};
+    if (args.length && typeof args[args.length - 1] === 'object' && args[args.length - 1] !== null &&
+        ('stream' in args[args.length - 1] || 'model' in args[args.length - 1])) {
+      options = args.pop();
+    }
     const cfg = builder(...args);
     let command = cfg.command;
     if (typeof command === 'function') {
@@ -192,7 +268,37 @@ export function createCognitiveStep(builder) {
       }
     }
 
-    const model = cfg.model || 'gpt-3.5-turbo';
+    const model = options.model || cfg.model || 'gpt-3.5-turbo';
+
+    if (options.stream) {
+      const { stream, promise } = await callLLM(messages, { model, stream: true });
+      const processedStream = cfg.streamProcessor ? cfg.streamProcessor(stream) : stream;
+
+      const finish = promise.then(async (responseText) => {
+        let result = responseText;
+        if (cfg.schema) {
+          try {
+            result = JSON.parse(responseText);
+          } catch {
+            // fallthrough
+          }
+        }
+        if (cfg.postProcess) {
+          const [mem, res] = await cfg.postProcess(
+            updated.withMemory({ role: ChatMessageRoleEnum.Assistant, content: responseText }),
+            result
+          );
+          updated.memories = mem.memories;
+          return res;
+        }
+        updated.memories.push({ role: ChatMessageRoleEnum.Assistant, content: responseText });
+        return result;
+      });
+
+      updated.finished = finish;
+      return [updated, processedStream, finish];
+    }
+
     const responseText = await callLLM(messages, { model });
 
     updated = updated.withMemory({ role: ChatMessageRoleEnum.Assistant, content: responseText });
@@ -248,6 +354,18 @@ export class Runtime {
     const runtime = this;
     return {
       speak(content) {
+        if (typeof content === 'string') {
+          runtime.emitter.emit('says', { content });
+          return;
+        }
+        if (content && typeof content[Symbol.asyncIterator] === 'function') {
+          runtime.emitter.emit('says', { stream: () => content });
+          return;
+        }
+        if (content && typeof content.stream === 'function') {
+          runtime.emitter.emit('says', { stream: content.stream, content: content.content });
+          return;
+        }
         runtime.emitter.emit('says', { content });
       },
       dispatch(event) {
