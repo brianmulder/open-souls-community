@@ -1,5 +1,5 @@
 
-import { MentalProcess, useActions, useProcessMemory, useProcessManager, WorkingMemory, createCognitiveStep, indentNicely, ChatMessageRoleEnum, z } from "@opensouls/engine";
+import { MentalProcess, useActions, useProcessMemory, useProcessManager, WorkingMemory, createCognitiveStep, indentNicely, ChatMessageRoleEnum, z } from "@opensouls/local-engine";
 import externalDialog from "./cognitiveSteps/externalDialog";
 import brainstorm from "./cognitiveSteps/brainstorm";
 import decision from "./cognitiveSteps/decision";

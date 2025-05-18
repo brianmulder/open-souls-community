@@ -1,4 +1,4 @@
-import { MentalProcess, useActions, useProcessMemory, usePerceptions, useProcessManager, indentNicely } from "@opensouls/engine";
+import { MentalProcess, useActions, useProcessMemory, usePerceptions, useProcessManager, indentNicely } from "@opensouls/local-engine";
 import externalDialog from "./cognitiveSteps/externalDialog";
 import decision from "./cognitiveSteps/decision"
 

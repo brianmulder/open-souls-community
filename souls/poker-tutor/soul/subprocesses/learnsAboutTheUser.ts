@@ -4,7 +4,7 @@ import {
   indentNicely,
   useActions,
   useProcessMemory
-} from "@opensouls/engine";
+} from "@opensouls/local-engine";
 import internalMonologue from "../cognitiveSteps/internalMonologue.js";
 import userNotes from "../cognitiveSteps/userNotes.js";
 

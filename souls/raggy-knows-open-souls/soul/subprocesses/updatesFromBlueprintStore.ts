@@ -1,5 +1,5 @@
 
-import { MentalProcess, useActions } from "@opensouls/engine";
+import { MentalProcess, useActions } from "@opensouls/local-engine";
 import withRagContext from "../cognitiveFunctions/withRagContext";
 
 const updatesFromBlueprintStore: MentalProcess = async ({ workingMemory }) => {

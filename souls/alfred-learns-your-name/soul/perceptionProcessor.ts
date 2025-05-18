@@ -1,4 +1,4 @@
-import { ChatMessageRoleEnum, InputMemory, Memory, PerceptionProcessor, useActions, useSoulMemory } from "@opensouls/engine"
+import { ChatMessageRoleEnum, InputMemory, Memory, PerceptionProcessor, useActions, useSoulMemory } from "@opensouls/local-engine"
 
 function safeName(name?: string) {
   return (name || "").replace(/[^a-zA-Z0-9_-{}]/g, '_').slice(0, 62);

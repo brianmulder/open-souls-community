@@ -22,7 +22,7 @@ test('runtime hosts the empty soul', async () => {
   const tsPath = path.resolve('../souls/empty-soul/soul/initialProcess.ts');
   const tsSource = await fs.readFile(tsPath, 'utf8');
   const runtimeUrl = pathToFileURL(path.resolve('index.js')).href;
-  const replaced = tsSource.replace('@opensouls/engine', runtimeUrl);
+  const replaced = tsSource.replace('@opensouls/local-engine', runtimeUrl);
   const jsSource = ts.transpileModule(replaced, {
     compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 }
   }).outputText;

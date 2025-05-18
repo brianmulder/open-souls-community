@@ -1,5 +1,5 @@
 
-import { MentalProcess, createCognitiveStep, indentNicely, useActions, useProcessManager, useSoulMemory, z } from "@opensouls/engine";
+import { MentalProcess, createCognitiveStep, indentNicely, useActions, useProcessManager, useSoulMemory, z } from "@opensouls/local-engine";
 import externalDialog from "./cognitiveSteps/externalDialog.js";
 import mentalQuery from "./lib/mentalQuery.js";
 

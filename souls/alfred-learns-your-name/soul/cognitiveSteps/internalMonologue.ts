@@ -1,4 +1,4 @@
-import { createCognitiveStep, WorkingMemory, ChatMessageRoleEnum, indentNicely, stripEntityAndVerb, stripEntityAndVerbFromStream } from "@opensouls/engine";
+import { createCognitiveStep, WorkingMemory, ChatMessageRoleEnum, indentNicely, stripEntityAndVerb, stripEntityAndVerbFromStream } from "@opensouls/local-engine";
 
 const internalMonologue = createCognitiveStep((instructions: string | { instructions: string; verb: string }) => {
   let instructionString: string, verb: string;
