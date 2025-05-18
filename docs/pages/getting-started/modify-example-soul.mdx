@@ -6,7 +6,7 @@ As an introduction to the soul development process with the Soul Engine, we'll m
 
 ## Preparation
 
-Make sure the local runtime (`node ../../runtime/cli.js .`) is running so the changes you make take effect. Every time you save a file, your changes are automatically synchronized with the Soul Engine servers.
+Make sure the local runtime (`node ../../runtime/cli.js .`) is running (it transpiles any TypeScript for you) so the changes you make take effect. Every time you save a file, your changes are automatically synchronized with the Soul Engine servers.
 
 ```mermaid
 flowchart LR
@@ -75,6 +75,6 @@ Now try speaking to Samantha again. You'll see that she continues to answer in t
 
 ![](/images/guide/modify-example-soul/06-samantha-is-alive.png)
 
-Samantha's soul has been running on the Soul Engine servers since you ran `node ../../runtime/cli.js .` for the first time. While the process is running, any changes you make will be automatically synchronized with the servers.
+Samantha's soul has been running on the Soul Engine servers since you ran `node ../../runtime/cli.js .` for the first time. While the process is running (and transpiling your TypeScript), any changes you make will be automatically synchronized with the servers.
 
 Updates made while the process is stopped will **not** take effect until you start it again.

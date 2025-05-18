@@ -1,11 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'fs/promises';
-import os from 'os';
 import path from 'path';
-import { pathToFileURL } from 'url';
-import * as ts from 'typescript';
 import { createRuntime, ChatMessageRoleEnum } from '../index.js';
+import { loadProcess } from '../cli.js';
 
 test('runtime hosts the empty soul', async () => {
   process.env.OPENAI_API_KEY = 'test-key';
@@ -19,18 +16,8 @@ test('runtime hosts the empty soul', async () => {
     };
   };
 
-  const tsPath = path.resolve('../souls/empty-soul/soul/initialProcess.ts');
-  const tsSource = await fs.readFile(tsPath, 'utf8');
-  const runtimeUrl = pathToFileURL(path.resolve('index.js')).href;
-  const replaced = tsSource.replace('@opensouls/local-engine', runtimeUrl);
-  const jsSource = ts.transpileModule(replaced, {
-    compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 }
-  }).outputText;
-  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'golem-'));
-  const jsPath = path.join(tmpDir, 'initialProcess.js');
-  await fs.writeFile(jsPath, jsSource);
-
-  const { default: initialProcess } = await import(pathToFileURL(jsPath).href);
+  const soulDir = path.resolve('../souls/empty-soul');
+  const initialProcess = await loadProcess(soulDir);
   const runtime = createRuntime({ initialProcess, soulName: 'Golem' });
   const says = [];
   runtime.on('says', ({ content }) => says.push(content));

@@ -10,3 +10,4 @@ He tries to learn your name, and once he does, instead of "interlocutor" saved i
 ```bash
 node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.

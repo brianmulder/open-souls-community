@@ -15,6 +15,7 @@ soul.
 cd souls/example-twenty-questions
 node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources, so no prebuild step is needed.
 
 ## 💫 AI Souls
 
@@ -24,6 +25,7 @@ AI Souls are agentic and embodied digital beings, one day comprising thousands o
 1. Clone the repository and install dependencies for any soul you wish to run.
 1. Export your OpenAI API key: `export OPENAI_API_KEY=your-key`.
 1. Run the soul with `node ../../runtime/cli.js .`
+   (the CLI automatically transpiles TypeScript sources)
 
 Make sure to checkout the [documentation](https://docs.souls.chat)!
 

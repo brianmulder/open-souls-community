@@ -16,3 +16,4 @@ The minimum set of files in the `/soul` directory:
 ```bash
 node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.

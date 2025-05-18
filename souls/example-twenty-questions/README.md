@@ -38,3 +38,4 @@ In this directory run
 ```bash
 node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.

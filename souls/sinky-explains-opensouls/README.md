@@ -17,3 +17,4 @@ then
 ```bash
 node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.
