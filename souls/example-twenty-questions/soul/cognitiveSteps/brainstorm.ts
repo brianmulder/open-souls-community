@@ -1,4 +1,4 @@
-import { createCognitiveStep, WorkingMemory, ChatMessageRoleEnum, indentNicely, z } from "@opensouls/engine";
+import { createCognitiveStep, WorkingMemory, ChatMessageRoleEnum, indentNicely, z } from "@opensouls/local-engine";
 
 const brainstorm = createCognitiveStep((description: string) => {
   const params = z.object({

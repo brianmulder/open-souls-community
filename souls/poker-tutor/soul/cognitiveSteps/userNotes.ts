@@ -1,4 +1,4 @@
-import { createCognitiveStep, WorkingMemory, ChatMessageRoleEnum, indentNicely } from "@opensouls/engine";
+import { createCognitiveStep, WorkingMemory, ChatMessageRoleEnum, indentNicely } from "@opensouls/local-engine";
 
 /**
  * `userNotes` is a cognitive step designed for generating and processing user notes within a chat-based system.

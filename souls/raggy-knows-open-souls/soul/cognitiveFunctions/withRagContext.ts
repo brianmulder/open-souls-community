@@ -1,4 +1,4 @@
-import { ChatMessageRoleEnum, WorkingMemory, createCognitiveStep, indentNicely, useActions, useBlueprintStore, z } from "@opensouls/engine"
+import { ChatMessageRoleEnum, WorkingMemory, createCognitiveStep, indentNicely, useActions, useBlueprintStore, z } from "@opensouls/local-engine"
 
 const MAX_QA_MEMORY_LENGTH = 700
 

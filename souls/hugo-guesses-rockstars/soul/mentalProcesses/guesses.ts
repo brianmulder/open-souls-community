@@ -1,7 +1,7 @@
-import { indentNicely } from "@opensouls/engine";
+import { indentNicely } from "@opensouls/local-engine";
 import externalDialog from "../cognitiveSteps/externalDialog.js";
 import mentalQuery from "../cognitiveSteps/mentalQuery.js";
-import { MentalProcess, useProcessMemory, useActions } from "@opensouls/engine";
+import { MentalProcess, useProcessMemory, useActions } from "@opensouls/local-engine";
 import brainstorm from "../cognitiveSteps/brainstorm.js";
 
 const guesses: MentalProcess<{ object: string }> = async ({

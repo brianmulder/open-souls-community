@@ -4,7 +4,7 @@ This file describes how ChatGPT and repository contributors should work together
 
 ## Repository Layout
 
-- `runtime/` – source for the local soul engine runtime. Run a soul with `node cli.js <path-to-soul>`.
+- `runtime/` – source for the local soul engine runtime (published as `@opensouls/local-engine`). Run a soul with `node cli.js <path-to-soul>`.
 - `souls/` – example souls that can be executed with the runtime.
 - `library/` – shared cognitive functions and utilities.
 - `docs/` – documentation site for the project.

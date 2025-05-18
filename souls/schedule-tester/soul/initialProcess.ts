@@ -1,5 +1,5 @@
 
-import { MentalProcess, useActions, usePerceptions } from "@opensouls/engine";
+import { MentalProcess, useActions, usePerceptions } from "@opensouls/local-engine";
 import externalDialog from "./cognitiveSteps/externalDialog.js"
 
 const pokesSpeaker: MentalProcess = async ({ workingMemory }) => {

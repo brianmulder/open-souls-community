@@ -1,4 +1,4 @@
-import { MentalProcess, useActions } from "@opensouls/engine";
+import { MentalProcess, useActions } from "@opensouls/local-engine";
 import externalDialog from "../cognitiveSteps/externalDialog.js";
 
 const pitchesTheSoulEngine: MentalProcess = async ({ workingMemory: memory }) => {

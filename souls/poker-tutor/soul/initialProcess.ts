@@ -1,4 +1,4 @@
-import { MentalProcess, useActions, useProcessManager } from "@opensouls/engine";
+import { MentalProcess, useActions, useProcessManager } from "@opensouls/local-engine";
 import assists from "./mentalProcesses/assists.js";
 import externalDialog from "./cognitiveSteps/externalDialog.js";
 

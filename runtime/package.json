@@ -1,5 +1,5 @@
 {
-  "name": "@opensouls/engine",
+  "name": "@opensouls/local-engine",
   "version": "0.0.0-local",
   "type": "module",
   "exports": {

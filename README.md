@@ -4,7 +4,7 @@
 
 ## 🤔 What is this?
 
-This repository is a place for sharing knowledge on how to create AI souls. This repository holds docs, snippets, and examples for building AI souls with `@opensouls/core` and our **local runtime**.
+This repository is a place for sharing knowledge on how to create AI souls. This repository holds docs, snippets, and examples for building AI souls with `@opensouls/core` and our **local runtime**. The runtime is published as `@opensouls/local-engine`.
 
 
 Any soul in the repo can be run locally using the new runtime. The runtime uses

@@ -1,4 +1,4 @@
-import { createCognitiveStep, WorkingMemory, ChatMessageRoleEnum, indentNicely } from "@opensouls/engine";
+import { createCognitiveStep, WorkingMemory, ChatMessageRoleEnum, indentNicely } from "@opensouls/local-engine";
 
 /**
  * Used by the summarizeAndCompress subprocess to summarize a conversation, and then compress it down
