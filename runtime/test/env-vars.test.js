@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'fs/promises';
 import path from 'path';
-import { createRuntime, loadEnvironment, loadBlueprint, ChatMessageRoleEnum, $$ } from '../index.js';
+import { createRuntime, loadEnvironment, loadBlueprint, ChatMessageRoleEnum, $$, createPerception } from '../index.js';
 import { loadProcess } from '../cli.js';
 
 const soulDir = path.resolve('../souls/env-vars');
@@ -29,12 +29,12 @@ test('environment variables are loaded and templated', async () => {
   const [systemBefore] = runtime.workingMemory.memories;
   assert.equal(systemBefore.content, blueprint);
 
-  const says = [];
-  runtime.on('says', ({ content }) => says.push(content));
+  const acts = [];
+  runtime.on('act', a => acts.push(a.payload));
 
-  await runtime.dispatch({ action: 'said', name: 'User', content: 'hi' });
+  await runtime.ingestPerception(createPerception('utterance', 'hi'));
 
-  assert.deepEqual(says, ['I like alice, pumpkins.']);
+  assert.deepEqual(acts, ['I like alice, pumpkins.']);
   assert.equal(runtime.workingMemory.memories.length, 2);
   const [system, user] = runtime.workingMemory.memories;
   assert.equal(system.role, ChatMessageRoleEnum.System);

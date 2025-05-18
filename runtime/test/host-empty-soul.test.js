@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'path';
-import { createRuntime, ChatMessageRoleEnum } from '../index.js';
+import { createRuntime, ChatMessageRoleEnum, createPerception } from '../index.js';
 import { loadProcess } from '../cli.js';
 
 test('runtime hosts the empty soul', async () => {
@@ -19,13 +19,13 @@ test('runtime hosts the empty soul', async () => {
   const soulDir = path.resolve('../souls/empty-soul');
   const initialProcess = await loadProcess(soulDir);
   const runtime = createRuntime({ initialProcess, soulName: 'Golem' });
-  const says = [];
-  runtime.on('says', ({ content }) => says.push(content));
+  const acts = [];
+  runtime.on('act', a => acts.push(a.payload));
 
-  await runtime.dispatch({ action: 'said', name: 'User', content: 'hi' });
+  await runtime.ingestPerception(createPerception('utterance', 'hi'));
 
   assert.ok(fetchCalled, 'OpenAI API should be called');
-  assert.deepEqual(says, ['Hello world']);
+  assert.deepEqual(acts, ['Hello world']);
   assert.equal(runtime.workingMemory.memories.length, 2);
   const [user, assistant] = runtime.workingMemory.memories;
   assert.equal(user.role, ChatMessageRoleEnum.User);

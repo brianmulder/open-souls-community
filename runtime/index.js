@@ -32,6 +32,28 @@ export const ChatMessageRoleEnum = {
   Assistant: 'assistant'
 };
 
+/**
+ * @typedef {object} Perception
+ * @property {string} type
+ * @property {any} payload
+ * @property {number} ts
+ */
+
+/**
+ * @typedef {object} Action
+ * @property {string} type
+ * @property {any} payload
+ * @property {number} ts
+ */
+
+export function createPerception(type, payload, ts = Date.now()) {
+  return { type, payload, ts };
+}
+
+export function createAction(type, payload, ts = Date.now()) {
+  return { type, payload, ts };
+}
+
 export class WorkingMemory {
   constructor({ soulName = 'Soul', memories = [] } = {}) {
     this.soulName = soulName;
@@ -353,20 +375,18 @@ export class Runtime {
   useActions() {
     const runtime = this;
     return {
+      act(action) {
+        const out = { ...action };
+        if (!('ts' in out)) out.ts = Date.now();
+        runtime.emitter.emit('act', out);
+      },
       speak(content) {
-        if (typeof content === 'string') {
-          runtime.emitter.emit('says', { content });
-          return;
-        }
-        if (content && typeof content[Symbol.asyncIterator] === 'function') {
-          runtime.emitter.emit('says', { stream: () => content });
-          return;
-        }
-        if (content && typeof content.stream === 'function') {
-          runtime.emitter.emit('says', { stream: content.stream, content: content.content });
-          return;
-        }
-        runtime.emitter.emit('says', { content });
+        const act = typeof content === 'string'
+          ? createAction('utterance', content)
+          : content;
+        const out = { ...act };
+        if (!('ts' in out)) out.ts = Date.now();
+        runtime.emitter.emit('act', out);
       },
       dispatch(event) {
         runtime.emitter.emit(event.action || 'dispatch', event);
@@ -416,7 +436,7 @@ export class Runtime {
     return this.soulMemory.get(key);
   }
 
-  async dispatch(perception, processOverride) {
+  async ingestPerception(perception, processOverride) {
     this._perceptionQueue.push({ perception, processOverride });
     if (this._subprocessTask) {
       this._abortSubprocesses = true;
@@ -429,6 +449,10 @@ export class Runtime {
     await this._processQueue();
   }
 
+  async dispatch(perception, processOverride) {
+    return this.ingestPerception(perception, processOverride);
+  }
+
   async _processQueue() {
     while (this._perceptionQueue.length > 0) {
       const { perception, processOverride } = this._perceptionQueue.shift();
@@ -438,7 +462,7 @@ export class Runtime {
 
       this.workingMemory = this.workingMemory.withMemory({
         role: ChatMessageRoleEnum.User,
-        content: `${perception.name || 'User'} ${perception.action}: "${perception.content}"`
+        content: `${perception.type}: ${JSON.stringify(perception.payload)}`
       });
       const proc = processOverride || this.currentProcess;
       currentRuntime = this;
@@ -483,7 +507,7 @@ export class Runtime {
     const evt = this.scheduledEvents.get(id);
     if (!evt) return;
     this.scheduledEvents.delete(id);
-    this.dispatch(evt.perception, evt.process);
+    this.ingestPerception(evt.perception, evt.process);
   }
 
   cancelScheduledEvent(id) {
