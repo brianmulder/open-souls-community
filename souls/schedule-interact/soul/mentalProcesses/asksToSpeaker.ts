@@ -1,4 +1,4 @@
-import { MentalProcess, useActions, useSoulStore } from "@opensouls/engine";
+import { MentalProcess, useActions, useSoulStore } from "@opensouls/local-engine";
 import pokesSpeaker from "../initialProcess.js";
 import mentalQuery from "../cognitiveSteps/mentalQuery.js";
 import internalMonologue from "../cognitiveSteps/internalMonologue.js";

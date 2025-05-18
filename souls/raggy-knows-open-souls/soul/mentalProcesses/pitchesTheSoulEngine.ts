@@ -1,5 +1,5 @@
 
-import { ChatMessageRoleEnum, MentalProcess, WorkingMemory, useActions, useRag } from "@opensouls/engine";
+import { ChatMessageRoleEnum, MentalProcess, WorkingMemory, useActions, useRag } from "@opensouls/local-engine";
 import mentalQuery from "../cognitiveSteps/mentalQuery";
 import externalDialog from "../cognitiveSteps/externalDialog";
 import withRagContext from "../cognitiveFunctions/withRagContext";

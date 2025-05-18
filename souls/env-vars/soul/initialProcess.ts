@@ -1,5 +1,5 @@
 
-import { MentalProcess, useActions } from "@opensouls/engine";
+import { MentalProcess, useActions } from "@opensouls/local-engine";
 
 const provesEnvironmentVariablesWork: MentalProcess = async ({ workingMemory }) => {
   const { speak, log } = useActions()

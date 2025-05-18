@@ -1,5 +1,5 @@
 
-import { MentalProcess, useActions } from "@opensouls/engine";
+import { MentalProcess, useActions } from "@opensouls/local-engine";
 import externalDialog from "./cognitiveSteps/externalDialog.js";
 
 /* This is a simple mental process that generates a line of dialog, speaks the dialog, then 

@@ -1,5 +1,5 @@
 
-import { MentalProcess, useActions, useProcessMemory, ChatMessageRoleEnum, WorkingMemory, createCognitiveStep, indentNicely } from "@opensouls/engine";
+import { MentalProcess, useActions, useProcessMemory, ChatMessageRoleEnum, WorkingMemory, createCognitiveStep, indentNicely } from "@opensouls/local-engine";
 import mentalQuery from "../cognitiveSteps/mentalQuery.js";
 import internalMonologue from "../cognitiveSteps/internalMonologue.js";
 

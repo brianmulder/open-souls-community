@@ -14,5 +14,6 @@ The source code for these processes can be found in the `./src` directory.
 In this directory run
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.

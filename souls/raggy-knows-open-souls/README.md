@@ -23,5 +23,6 @@ npm run docs:push
 then
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.

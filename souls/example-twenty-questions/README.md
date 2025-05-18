@@ -36,5 +36,6 @@ The full definition can be found in the code, but this should provide a high-lev
 In this directory run
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.

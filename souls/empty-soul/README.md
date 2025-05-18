@@ -14,5 +14,6 @@ The minimum set of files in the `/soul` directory:
 ## Run this soul
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.

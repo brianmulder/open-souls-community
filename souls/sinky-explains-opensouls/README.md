@@ -15,5 +15,6 @@ npx soul-engine rag push ./rag
 then
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.

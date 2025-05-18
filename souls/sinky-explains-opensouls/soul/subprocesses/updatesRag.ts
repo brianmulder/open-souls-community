@@ -1,4 +1,4 @@
-import { MentalProcess, useActions, useRag } from "@opensouls/engine";
+import { MentalProcess, useActions, useRag } from "@opensouls/local-engine";
 
 const updatesRag: MentalProcess = async ({ workingMemory }) => {
   const { withRagContext } = useRag("example-sinky-says-awesome");

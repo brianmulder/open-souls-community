@@ -15,7 +15,7 @@ Schmoozie is a Discord bot that can take part in lively group conversations and 
 Simply go to the root directory and run:
 
 ```bash
-npx soul-engine dev
+node ../../../runtime/cli.js .
 ```
 
 ## 🎮 Running in Development with Discord

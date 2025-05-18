@@ -1,10 +1,10 @@
-import { ChatMessageRoleEnum, z } from "@opensouls/engine";
+import { ChatMessageRoleEnum, z } from "@opensouls/local-engine";
 import brainstorm from "./cognitiveSteps/brainstorm.js";
 import decision from "./cognitiveSteps/decision.js";
 import externalDialog from "./cognitiveSteps/externalDialog.js";
 import mentalQuery from "./cognitiveSteps/mentalQuery.js";
 import answersGuesses from "./mentalProcesses/answersQuestions.js";
-import { MentalProcess, useProcessManager, useProcessMemory, useActions } from "@opensouls/engine";
+import { MentalProcess, useProcessManager, useProcessMemory, useActions } from "@opensouls/local-engine";
 
 const introduction: MentalProcess = async ({ workingMemory }) => {
   const didPick = useProcessMemory("")

@@ -9,5 +9,6 @@ This soul is designed to experiment with breaking up thoughts into chains of tex
 In this directory run
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```
+The CLI automatically transpiles TypeScript sources.

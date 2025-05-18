@@ -1,5 +1,5 @@
 
-import { MentalProcess, useActions, useProcessManager, indentNicely } from "@opensouls/engine";
+import { MentalProcess, useActions, useProcessManager, indentNicely } from "@opensouls/local-engine";
 import asksQuestions from "./mentalProcesses/brainstorms.js";
 import externalDialog from "./cognitiveSteps/externalDialog";
 import internalMonologue from "./cognitiveSteps/internalMonologue";

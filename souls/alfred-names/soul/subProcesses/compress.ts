@@ -1,4 +1,4 @@
-import { createCognitiveStep, indentNicely, ChatMessageRoleEnum, WorkingMemory, MentalProcess, useProcessMemory } from "@opensouls/engine";
+import { createCognitiveStep, indentNicely, ChatMessageRoleEnum, WorkingMemory, MentalProcess, useProcessMemory } from "@opensouls/local-engine";
 
 const compressFn = createCognitiveStep(() => {
   return {

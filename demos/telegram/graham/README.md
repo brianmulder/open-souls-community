@@ -15,7 +15,7 @@ Graham is an example soul that can chat with you on Telegram.
 Simply go to the root directory and run:
 
 ```bash
-npx soul-engine dev
+node ../../../runtime/cli.js .
 ```
 
 ## 🎮 Running in Development with Telegram

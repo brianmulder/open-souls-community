@@ -10,12 +10,12 @@ Follow the [quick start guide](/) to run the Samantha soul. If everything goes w
 
 ![](/images/guide/run-example-soul/01-debugger-ui.png)
 
-This is what happened when you ran the `soul-engine dev` command:
+This is what happened when you ran `node ../../runtime/cli.js .` (which automatically transpiles TypeScript sources):
 
 ```mermaid
 flowchart LR
 
-yourComputer("Your computer \n\n (You ran soul-engine dev \n on Samantha's code)")
+yourComputer("Your computer \n\n (You ran the local runtime \n on Samantha's code)")
 soulEngine("Soul Engine servers \n\n (Samantha's soul runs here)")
 debugger("Debugger UI \n\n (The interface where you'll \n interact with Samantha)")
 

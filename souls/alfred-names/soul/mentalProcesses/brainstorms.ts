@@ -1,7 +1,7 @@
 import decision from "../cognitiveSteps/decision";
 import internalMonologue from "../cognitiveSteps/internalMonologue";
 import externalDialog from "../cognitiveSteps/externalDialog";
-import { MentalProcess, indentNicely, useActions, useProcessMemory } from "@opensouls/engine";
+import { MentalProcess, indentNicely, useActions, useProcessMemory } from "@opensouls/local-engine";
 
 /*
 A decision-making process to dynamically choose between asking thought-provoking questions or sharing interesting facts,
