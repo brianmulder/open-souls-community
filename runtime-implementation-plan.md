@@ -35,13 +35,13 @@ This document outlines the steps required to add missing functionality to the lo
 * Provide `useSoulMemory`, `useBlueprintStore` and `useOrganizationStore` for scoped persistence.
 * Start with a simple JSON or filesystem backend before exploring database options.
 
-## Milestone 6 – Subprocess Support
+## Milestone 6 – Subprocess Support *(Completed)*
 
 * Detect an optional `subprocesses/` directory or file alongside the main blueprint.
 * After each main mental process, execute any subprocesses asynchronously.
 * Abort subprocess execution if a new perception arrives that changes the main process.
 
-## Milestone 7 – Streaming and Stream Processing
+## Milestone 7 – Streaming and Stream Processing *(Completed)*
 
 * Extend `callLLM` and `createCognitiveStep` to accept a `stream` option.
 * Emit partial responses to `speak()` as tokens arrive.
