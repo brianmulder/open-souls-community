@@ -23,7 +23,7 @@ This document outlines the steps required to add missing functionality to the lo
 * Surface `pendingScheduledEvents` and `cancelScheduledEvent` through `useProcessManager`.
 * Update `wait()` to be a promise-based sleep helper used by processes.
 
-## Milestone 4 – Perception Utilities
+## Milestone 4 – Perception Utilities *(Completed)*
 
 * Record the perception that triggered the current process as `invokingPerception`.
 * Keep a list of new perceptions that arrive while a process is running (`pendingPerceptions`).

@@ -4,6 +4,7 @@ import path from 'path';
 import { pathToFileURL } from 'url';
 import os from 'os';
 import crypto from 'crypto';
+import { LocalStore } from './stores/localStore.js';
 
 let currentRuntime = null;
 
@@ -192,7 +193,7 @@ export function createCognitiveStep(builder) {
 }
 
 export class Runtime {
-  constructor(initialProcess, soulName = 'Soul', env = {}, blueprint = '') {
+  constructor(initialProcess, soulName = 'Soul', env = {}, blueprint = '', storeDir = path.join(os.tmpdir(), 'opensouls-store')) {
     this.soulName = soulName;
     this.env = env;
     this.currentProcess = initialProcess;
@@ -212,7 +213,10 @@ export class Runtime {
       });
     }
     this.processStore = new Map();
+    this.soulMemory = new Map();
     this.scheduledEvents = new Map();
+    this.storeDir = storeDir;
+    this.stores = new Map();
   }
 
   useActions() {
@@ -260,6 +264,13 @@ export class Runtime {
       this.processStore.set(key, initial);
     }
     return this.processStore.get(key);
+  }
+
+  useSoulMemory(key, initial) {
+    if (!this.soulMemory.has(key)) {
+      this.soulMemory.set(key, { current: initial });
+    }
+    return this.soulMemory.get(key);
   }
 
   async dispatch(perception, processOverride) {
@@ -338,6 +349,27 @@ export class Runtime {
       .map(({ id, when, perception, process }) => ({ id, when, perception, process }))
       .sort((a, b) => a.when - b.when);
   }
+
+  _getStore(scope, bucket) {
+    const key = `${scope}:${bucket}`;
+    if (!this.stores.has(key)) {
+      const file = path.join(this.storeDir, scope, `${bucket}.json`);
+      this.stores.set(key, new LocalStore(file));
+    }
+    return this.stores.get(key);
+  }
+
+  useSoulStore(bucket = 'default') {
+    return this._getStore('soul', bucket);
+  }
+
+  useBlueprintStore(bucket = 'default') {
+    return this._getStore('blueprint', bucket);
+  }
+
+  useOrganizationStore(bucket = 'default') {
+    return this._getStore('organization', bucket);
+  }
 }
 
 export function createRuntime(options) {
@@ -345,7 +377,8 @@ export function createRuntime(options) {
     options.initialProcess,
     options.soulName,
     options.env || {},
-    options.blueprint || ''
+    options.blueprint || '',
+    options.storeDir
   );
 }
 
@@ -366,6 +399,34 @@ export function useProcessMemory() {
     throw new Error('useProcessMemory can only be called inside a mental process');
   }
   return currentRuntime.useProcessMemory(...arguments);
+}
+
+export function useSoulMemory() {
+  if (!currentRuntime) {
+    throw new Error('useSoulMemory can only be called inside a mental process');
+  }
+  return currentRuntime.useSoulMemory(...arguments);
+}
+
+export function useSoulStore() {
+  if (!currentRuntime) {
+    throw new Error('useSoulStore can only be called inside a mental process');
+  }
+  return currentRuntime.useSoulStore(...arguments);
+}
+
+export function useBlueprintStore() {
+  if (!currentRuntime) {
+    throw new Error('useBlueprintStore can only be called inside a mental process');
+  }
+  return currentRuntime.useBlueprintStore(...arguments);
+}
+
+export function useOrganizationStore() {
+  if (!currentRuntime) {
+    throw new Error('useOrganizationStore can only be called inside a mental process');
+  }
+  return currentRuntime.useOrganizationStore(...arguments);
 }
 
 export function usePerceptions() {
