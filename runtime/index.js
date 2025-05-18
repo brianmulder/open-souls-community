@@ -128,6 +128,27 @@ export async function loadBlueprint(soulDir, env = {}) {
   return $$(content);
 }
 
+export async function loadSubprocesses(soulDir) {
+  const dir = path.resolve(soulDir, 'soul', 'subprocesses');
+  try {
+    const stat = await fs.stat(dir);
+    if (!stat.isDirectory()) {
+      return [];
+    }
+  } catch {
+    return [];
+  }
+  const files = (await fs.readdir(dir))
+    .filter(f => f.endsWith('.js'))
+    .sort();
+  const procs = [];
+  for (const file of files) {
+    const mod = await import(pathToFileURL(path.join(dir, file)).href);
+    procs.push(mod.default);
+  }
+  return procs;
+}
+
 export async function callLLM(messages, { model = 'gpt-3.5-turbo' } = {}) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
@@ -193,7 +214,7 @@ export function createCognitiveStep(builder) {
 }
 
 export class Runtime {
-  constructor(initialProcess, soulName = 'Soul', env = {}, blueprint = '', storeDir = path.join(os.tmpdir(), 'opensouls-store')) {
+  constructor(initialProcess, soulName = 'Soul', env = {}, blueprint = '', storeDir = path.join(os.tmpdir(), 'opensouls-store'), subprocesses = []) {
     this.soulName = soulName;
     this.env = env;
     this.currentProcess = initialProcess;
@@ -217,6 +238,10 @@ export class Runtime {
     this.scheduledEvents = new Map();
     this.storeDir = storeDir;
     this.stores = new Map();
+    this.subprocesses = subprocesses.slice();
+    this._subprocessTask = null;
+    this._subprocessPending = false;
+    this._abortSubprocesses = false;
   }
 
   useActions() {
@@ -275,6 +300,10 @@ export class Runtime {
 
   async dispatch(perception, processOverride) {
     this._perceptionQueue.push({ perception, processOverride });
+    if (this._subprocessTask) {
+      this._abortSubprocesses = true;
+      await this._subprocessTask;
+    }
     if (this._processing) {
       this.pendingPerceptions.current.push(perception);
       return;
@@ -310,6 +339,9 @@ export class Runtime {
         currentRuntime = null;
         delete globalThis.soul;
         this._processing = false;
+      }
+      if (this.subprocesses.length > 0) {
+        this._runSubprocesses();
       }
     }
   }
@@ -350,6 +382,42 @@ export class Runtime {
       .sort((a, b) => a.when - b.when);
   }
 
+  async _runSubprocesses() {
+    if (this._subprocessTask) {
+      this._subprocessPending = true;
+      return;
+    }
+    this._abortSubprocesses = false;
+    const run = (async () => {
+      for (const proc of this.subprocesses) {
+        if (this._abortSubprocesses) break;
+        currentRuntime = this;
+        globalThis.soul = { env: this.env };
+        try {
+          const result = await proc({ workingMemory: this.workingMemory });
+          if (result instanceof WorkingMemory) {
+            this.workingMemory = result;
+          }
+        } catch (err) {
+          this.emitter.emit('log', 'subprocess error', err);
+        } finally {
+          currentRuntime = null;
+          delete globalThis.soul;
+        }
+      }
+    })();
+    this._subprocessTask = run;
+    run.finally(() => {
+      if (this._subprocessTask === run) {
+        this._subprocessTask = null;
+        if (this._subprocessPending) {
+          this._subprocessPending = false;
+          this._runSubprocesses();
+        }
+      }
+    });
+  }
+
   _getStore(scope, bucket) {
     const key = `${scope}:${bucket}`;
     if (!this.stores.has(key)) {
@@ -378,7 +446,8 @@ export function createRuntime(options) {
     options.soulName,
     options.env || {},
     options.blueprint || '',
-    options.storeDir
+    options.storeDir,
+    options.subprocesses || []
   );
 }
 

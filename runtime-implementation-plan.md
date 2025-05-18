@@ -29,7 +29,7 @@ This document outlines the steps required to add missing functionality to the lo
 * Keep a list of new perceptions that arrive while a process is running (`pendingPerceptions`).
 * Implement a `usePerceptions` hook so processes can access this information.
 
-## Milestone 5 – Persistence APIs
+## Milestone 5 – Persistence APIs *(Completed)*
 
 * Implement `useSoulStore` as a persistent key–value store with optional vector search.
 * Provide `useSoulMemory`, `useBlueprintStore` and `useOrganizationStore` for scoped persistence.
