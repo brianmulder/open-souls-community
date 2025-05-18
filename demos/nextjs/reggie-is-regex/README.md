@@ -9,7 +9,7 @@ The [soul](./soul/) directory contains reggie himself.
 The [web](./web/) directory contains a nextjs app which has a [SoulProvider](./web/src/components/SoulProvider.tsx) to hook up to Reggie.
 
 Getting started:
-`npx soul-engine dev` in this directory.
+`node ../../../runtime/cli.js .` in this directory.
 
 Follow the [README](./web/README.md) in the web directory
 and then:

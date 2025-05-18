@@ -15,7 +15,7 @@ FoodCritic is a food critic who gives great reviews about absolutely any kind of
 Run this inside the `food-critic` directory:
 
 ```bash
-npx soul-engine dev
+node ../../../runtime/cli.js .
 ```
 
 Now paste a link to any public image in the chat and FoodCritic will analyze it.

@@ -19,5 +19,5 @@ The main files in the `/src` directory are:
 In this directory run
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```

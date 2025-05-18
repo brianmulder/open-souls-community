@@ -17,7 +17,7 @@ Cranky is an insufferably sarcastic, ill-tempered, irritable person trapped insi
 Simply go to the root directory and run:
 
 ```bash
-npx soul-engine dev
+node ../../../runtime/cli.js .
 ```
 
 ## 🌎 Running the webapp

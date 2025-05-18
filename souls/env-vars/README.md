@@ -9,5 +9,5 @@ This soul is purely utilitarian, just example code to show using environment var
 In this directory run
 
 ```bash
-npx soul-engine dev
+node ../../runtime/cli.js .
 ```

@@ -17,7 +17,7 @@ Code Monkey can help you quickly create a draft version of a code snippet, techn
 Simply go to the root directory and run:
 
 ```bash
-npx soul-engine dev
+node ../../../runtime/cli.js .
 ```
 
 ## 🌎 Running the webapp
