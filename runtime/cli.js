@@ -12,15 +12,42 @@ async function exists(p) {
   try { await fs.access(p); return true; } catch { return false; }
 }
 
-async function compileTs(file) {
+async function compileTs(file, tmpDir = null, rootDir = null, compiled = new Set()) {
+  if (!tmpDir) {
+    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'soul-'));
+    rootDir = path.dirname(file);
+  }
+
   const source = await fs.readFile(file, 'utf8');
   const runtimeUrl = pathToFileURL(path.resolve(__dirname, 'index.js')).href;
-  const replaced = source.replace('@opensouls/local-engine', runtimeUrl);
+  let replaced = source.replace('@opensouls/local-engine', runtimeUrl);
+
+  const importRegex = /from\s+['"](\.\.?(?:\/[^'";]+)+\.js)['"]/g;
+  const imports = [];
+  replaced = replaced.replace(importRegex, (m, p1) => {
+    const tsTarget = path.resolve(path.dirname(file), p1.replace(/\.js$/, '.ts'));
+    if (!compiled.has(tsTarget)) {
+      imports.push(tsTarget);
+    }
+    const newPath = p1.replace(/\.js$/, '.mjs');
+    return `from '${newPath}'`;
+  });
+
+  compiled.add(file);
+  for (const dep of imports) {
+    try {
+      await fs.access(dep);
+      await compileTs(dep, tmpDir, rootDir, compiled);
+    } catch {}
+  }
+
   const jsSource = ts.transpileModule(replaced, {
     compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 }
   }).outputText;
-  const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'soul-'));
-  const jsPath = path.join(tmpDir, path.basename(file, '.ts') + '.js');
+
+  const rel = path.relative(rootDir, file).replace(/\.ts$/, '.mjs');
+  const jsPath = path.join(tmpDir, rel);
+  await fs.mkdir(path.dirname(jsPath), { recursive: true });
   await fs.writeFile(jsPath, jsSource);
   return jsPath;
 }
